@@ -4,7 +4,7 @@ jQuery.fn.getWordBeforeCursor = function(){
     // Split text into characters
     var chars = this.val().split('');
     // Get all characters before current
-    var before = char.slice(0, start);
+    var before = chars.slice(0, start);
     // Rejoin all characters then split on spaces to get words
     var words = before.join('').split(' ');
     // Return last word on the list
@@ -133,15 +133,18 @@ function emoteAutocomplete(word){
         var wait = setInterval(function(){
             // Get list of emotes on page (cutting off the header)
             var emotes = $('#emotes_table > tbody > tr').slice(1);
+
             /* If we got nothing, or the number of emotes doesn't match how many
              * the page says there is, then try again
              */
-            if (emotes === 0 || emotes.length == $('emotes_total').val()){
+            if (emotes.length > 0 && emotes.length == $('#emotes_total').text())
+            {
                 /* For each emote line split into children
                  * [0] is the actual emote, [1] is the 'self-use' description
                  * [2] is the 'use on other player' description 
                  * & also trim off full-stops for each description
                  */
+                debugLog("Got emotes");
                 emoteList = emotes.map(function(){
                                 var children = this.children;
                                 return "/" + $.trim(children[0].textContent 
