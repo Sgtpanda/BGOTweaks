@@ -55,6 +55,7 @@ function addAutocomplete(source){
     $( "#chat_input" )
       .autocomplete({
         minLength: 2,
+        appendTo: ".chat_input_div",
         source: function( request, response ) {
           response( $.ui.autocomplete.filter(
             source, $('#chat_input').getWordBeforeCursor() ) );
@@ -175,7 +176,7 @@ function userAutocomplete(word){
      * too
      */
     var userNames = $('.users > .chatUser').map(function(){
-                        return "@" + $.trim($(this).contents().filter(function(){
+                        return "@"+ $.trim($(this).contents().filter(function(){
                             return this.nodeType == 3;
                         })[0].nodeValue);
                     }).get();
@@ -192,7 +193,8 @@ function attemptAutoComplete(){
         //If reply then find the user to reply to and swap out their name
         debugLog('Attemping autocomplete reply'); 
         var username = findUserToReplyTo();
-        var newMessage = word.replace('/reply',username);
+        var message = $('#chat_input').val();
+        var newMessage = message.replace('/reply',username);
         $('#chat_input').val(newMessage);
     }
     else if (word[0] === '/'){
