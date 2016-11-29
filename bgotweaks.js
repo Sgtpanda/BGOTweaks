@@ -232,7 +232,7 @@ function pageLoaded(){
 
     $('#chat_input').keydown(function(event){
         // used to ignore up and down presses when selecting an item
-        var suggestions = $( this ).autocomplete( "instance" ).menu.active;
+        var suggestions = !!$($(this).autocomplete('widget')).is(':visible');
         if (event.which == $.ui.keyCode.UP && chatIndex > 0 && !suggestions){
             debugLog('UP Key Pressed');
             // If we were at the bottom then set the current message accordingly 
@@ -295,6 +295,16 @@ function pageLoaded(){
             $(this).autocomplete("disable");
         }
     });
+
+    $('#chat_input').on('input propertychange paste', function() {
+        var cursorPos = this.selectionStart
+        // if user delete's the word they were searching for then disable
+        if (this.value === '' || this.value[cursorPos - 1] === ' '){
+            $(this).autocomplete("close");
+            $(this).autocomplete("disable");            
+        }
+    });
+
 
     /* Horrible hack to remove the event handler on the send button and 
      * substitute it with our own 
