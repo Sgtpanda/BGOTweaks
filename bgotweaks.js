@@ -231,7 +231,9 @@ function pageLoaded(){
     var bottom = true;
 
     $('#chat_input').keydown(function(event){
-        if (event.which == $.ui.keyCode.UP && chatIndex > 0){
+        // used to ignore up and down presses when selecting an item
+        var suggestions = $( this ).autocomplete( "instance" ).menu.active;
+        if (event.which == $.ui.keyCode.UP && chatIndex > 0 && !suggestions){
             debugLog('UP Key Pressed');
             // If we were at the bottom then set the current message accordingly 
             if (bottom){
@@ -241,7 +243,7 @@ function pageLoaded(){
             // Get the previous message from history
             $('#chat_input').val(chatHistory[--chatIndex]);
         }
-        else if (event.which === $.ui.keyCode.DOWN){
+        else if (event.which === $.ui.keyCode.DOWN && !suggestions){
             debugLog('DOWN Key Pressed');
             /* If down is pressed and we haven't hit the end of history then
              * get the next item and set input
