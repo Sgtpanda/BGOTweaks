@@ -228,9 +228,14 @@ function pageLoaded(){
         $('#chat_input').val('');
     }
 
+    // Stop chrome's horrible yellow colour because it thinks the chatbox
+    // can be autofilled or something?
+    $('#chat_input').css('background-color', '#fff')
+
     // Variables for storing the current message & whether 'were at the 'bottom'
     var currentMessage = "";
     var bottom = true;
+    var messageForClick = "";
 
     $('#chat_input').keydown(function(event){
         // used to ignore up and down presses when selecting an item
@@ -272,7 +277,6 @@ function pageLoaded(){
             storeMessage();
             $('#chat_input').autocomplete("close");
             $('#chat_input').autocomplete("disable");
-            currentMessage = "";
         }
         else if (event.which === $.ui.keyCode.TAB) {
             debugLog('TAB Key Pressed');
@@ -307,21 +311,21 @@ function pageLoaded(){
         }
     });
 
-
-    /* Horrible hack to remove the event handler on the send button and 
-     * substitute it with our own 
+    /* So because the click handler on the page runs before ours, we have to do 
+     * a fantastic hack in order to get the message before that event handler 
+     * deletes it, so what we do is:
+     * 1) Get the current message as soon as they mouse over the send button 
+     * 2) When the button is clicked store this saved message in the history
      */
-    var button = $('#chat_button')[0];
-    var parent = button.parentNode;
-    parent.replaceChild(button.cloneNode(true),button);
+    $('#chat_button').mouseover(function(){
+        messageForClick = $('#chat_input').val();
+    });
 
-    /* Register a new event handler that makes it look like the user pressed
-     * enter instead
-     */
     $('#chat_button').click(function(){
-        var e = $.Event('keyup');
-        e.keyCode = $.ui.keyCode.ENTER;
-        $('#chat_input').trigger(e);
+        if (messageForClick !== ""){
+            debugLog('Message was: ' + messageForClick);
+            chatIndex = chatHistory.push(messageForClick);            
+        }
     });
 
     addAutocomplete([]);
